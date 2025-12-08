@@ -1,0 +1,17 @@
+[project]
+name = "toolsee"
+version = "0.1.0"
+description = "ToolSEE helper package for storing tool embeddings and auto-attaching tools to agents"
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+  "langchain",
+  "langchain-community",
+  "langchain-openai",
+  "python-dotenv",
+]
+
+[tool.poetry]
+name = "toolsee"
+version = "0.1.0"
