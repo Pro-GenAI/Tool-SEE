@@ -1,6 +1,8 @@
 <!-- # ToolSEE: Tool Retrieval for Scalable Agents -->
 <p align="center">
 <img src="./assets/Workflow.gif" alt="Workflow" height="600"/>
+<img src="./assets/Comparison.gif" alt="Workflow" height="253"/>
+
 <h4 align="center"><em>ToolSEE helps multi-tool agents stay fast, cheap, and accurate by selecting only the tools they need.</em></h4>
 </p>
 
@@ -65,21 +67,7 @@ pip install -e .[eval]
 
 ToolSEE uses OpenAI-compatible chat + embeddings through LangChain/OpenAI.
 
-Create a `.env` in the repo root (or export env vars) with:
-
-```bash
-# Chat model used by the demo agent
-OPENAI_API_KEY=...
-OPENAI_MODEL=gpt-4.1-mini  # example
-# Optional (leave empty to use OpenAI default base URL)
-OPENAI_API_BASE=
-
-# Embeddings used for tool retrieval
-EMBED_API_KEY=...
-EMBED_MODEL=text-embedding-3-small  # example
-# Optional (leave empty to use OpenAI default base URL)
-EMBED_API_BASE=
-```
+Create a `.env` in the repo root (or export env vars) using `.env.example` as a template.
 
 ### 3) Run the end-to-end demo
 

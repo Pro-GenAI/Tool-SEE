@@ -22,6 +22,9 @@ eval = [
   "tiktoken",
 ]
 
+[tool.setuptools.packages.find]
+include = ["tool_see*", "benchmark_toolsee*"]
+
 [tool.poetry]
 name = "tool_see"
 version = "0.1.1"
