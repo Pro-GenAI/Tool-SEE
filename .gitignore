@@ -8,6 +8,9 @@ test.ipynb
 *.bkp
 *.db
 TODO.*
+unused/
+eval_datasets/
+.deepeval/
 
 
 # Research paper files

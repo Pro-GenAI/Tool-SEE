@@ -100,9 +100,6 @@ class ToolMemory:
             self._store = json.load(f)
 
 
-tool_memory = ToolMemory()
-
-
 def create_tool(metadata: Dict[str, Any]) -> Optional[BaseTool]:
     """Convert metadata into a LangChain tool function using @tool wrapper.
 

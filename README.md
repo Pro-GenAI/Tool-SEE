@@ -1,69 +1,184 @@
-# ToolSEE: Agent Tool Search Engine for Reliable Tool Selection
+<!-- # ToolSEE: Tool Retrieval for Scalable Agents -->
+<p align="center">
+<img src="./assets/Workflow.gif" alt="Workflow" height="600"/>
+<h4 align="center"><em>ToolSEE helps multi-tool agents stay fast, cheap, and accurate by selecting only the tools they need.</em></h4>
+</p>
 
-ToolSEE helps agents find the most appropriate tools for their tasks in real time.
+## Why this exists
 
-## Problem
+Multi-tool agents don’t just pay for tool execution — they pay for *tool descriptions*. As tool catalogs grow (hundreds → thousands), agents get hit by a scalability bottleneck:
 
-Agents often get overloaded with large collections of tools and struggle to choose the right one. Multiple tools — especially junk, redundant, or harmful tools — can confuse agents and increase hallucinations, reducing their effectiveness and reliability. This problem is often compounded by insufficient context engineering — not just prompt engineering — because without well-curated context (concise tool descriptions, provenance, and example usages), agents receive noisy or incomplete signals about tool capabilities, which further degrades tool selection and increases errors.
+- **Context overload:** you stuff huge tool schemas/descriptions into the prompt.
+- **Higher latency & cost:** bigger prompts take longer and cost more.
+- **Lower reliability:** noisy tool lists increase wrong-tool calls and hallucinations.
 
-## Solution
+ToolSEE is a lightweight tool retrieval layer that keeps the agent’s context small while still letting it use large tool catalogs.
 
-ToolSEE implements a dynamic tool search engine that helps agents discover and select the most appropriate tools for a given task on the fly. By ranking and filtering candidate tools based on relevance, safety, and provenance, ToolSEE reduces noise and improves decision-making for agents.
+## What ToolSEE does
+
+ToolSEE stands for Tool Search Engine for Efficient Agents. ToolSEE indexes your tools (name/description + metadata), then retrieves and ranks the most relevant tools for the current user request.
+
+**Outcome:** the model sees a small, high-signal tool set instead of a giant, noisy catalog.
 
 __Key points__:
-- Real-time search and ranking of tools relevant to the current task and context.
-- Filtering out low-quality, redundant, or potentially harmful tools.
-- Integrates as a lightweight component that agents can query to guide tool selection.
+- Real-time search and ranking of tools relevant to the current task.
+- Filters candidate tools by relevance (and supports score thresholds).
+- Can dynamically expand tools mid-run via a `search_tools` tool.
+- Designed to be a drop-in module in an existing agent loop.
 
-## How ToolSEE Works (high level)
+Agents often get overloaded with large collections of tools and struggle to choose the right one. Multiple tools — especially junk, redundant, or harmful tools — can confuse agents and increase hallucinations, reducing their effectiveness and reliability. This problem is often compounded by insufficient context engineering — not just prompt engineering — because without well-curated context (concise tool descriptions, provenance, and example usages), agents receive noisy or incomplete signals about tool capabilities, which further degrades tool selection and increases errors. Excess tokens in the context leads to increasing cost and time taken to process the input.
 
-- Index available tools with metadata (capabilities, inputs, outputs, safety notes).
-- Given an agent request and runtime context, score candidate tools for relevance and safety.
-- Return a ranked list of selected tools with short context snippets and example calls.
-- Optionally, the agent can request more information or verification traces before invoking a tool.
+## How it works (high level)
 
-## Why ToolSEE matters
+- **Ingest tools** into `ToolMemory` (in-memory store of embeddings + metadata).
+- **Retrieve** top-$k$ tools by cosine similarity for the current query.
+- **Attach only the selected tools** to the agent (or let the agent call `search_tools` to expand during execution).
 
-Selecting the right tool at the right moment is the difference between a reliable agent and a hallucination-prone one. ToolSEE turns chaotic tool catalogs into clear, actionable choices:
-- **Fewer mistakes:** Rank by task fit and safety to cut tool misuse.
-- **Faster decisions:** Real-time scoring trims exploration time to seconds.
-- **Higher trust:** Surface provenance and examples so agents know why a tool is chosen.
-- **Drop-in integration:** Minimal changes to your agent loop—keep your architecture intact.
+This keeps prompt/tool context usage effectively constant with respect to the total number of tools (the model only receives the few selected tools).
 
-## Expected Outcomes
-- **Reduced hallucinations:** Cleaner context and smarter selection lowers error rates.
-- **Improved latency:** Less trial-and-error tool calling speeds up responses.
-- **Better reliability:** Consistent, explainable tool choice builds confidence in production.
+## Why it matters
 
+Selecting the right tool at the right moment is the difference between a reliable agent and a hallucination-prone one. ToolSEE makes large tool catalogs usable in production:
+
+- **Less noise → fewer wrong tools:** retrieval narrows the action space.
+- **Less context → lower latency & cost:** fewer tokens sent per call.
+- **Better scalability:** add tools without “prompt bloat”.
+
+> Note: Exact token→latency and token→cost depends on your provider/model and pricing.
+> The benchmarks below show the *measured* selection latency and the *measured* token savings in this repo.
 
 ## Quick Start
 
-Use the scripts to experience ToolSEE end-to-end:
+### 1) Install
 
 ```bash
-# From the repository root
-python -m tool_see.scripts.test_flow
-
-# Optional: measure search latency characteristics
-python -m tool_see.scripts.test_latency
+pip install -e .
 ```
 
-Then explore the core components:
-- `tool_see/tool_searcher.py`: Scoring, ranking, and filtering.
-- `tool_see/auto_tool_agent.py`: Example agent loop integration.
-- `tool_see/utils/llm_utils.py`: Prompt construction helpers and LLM glue.
+For evaluation/benchmark dependencies:
+
+```bash
+pip install -e .[eval]
+```
+
+### 2) Configure environment variables
+
+ToolSEE uses OpenAI-compatible chat + embeddings through LangChain/OpenAI.
+
+Create a `.env` in the repo root (or export env vars) with:
+
+```bash
+# Chat model used by the demo agent
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4.1-mini  # example
+# Optional (leave empty to use OpenAI default base URL)
+OPENAI_API_BASE=
+
+# Embeddings used for tool retrieval
+EMBED_API_KEY=...
+EMBED_MODEL=text-embedding-3-small  # example
+# Optional (leave empty to use OpenAI default base URL)
+EMBED_API_BASE=
+```
+
+### 3) Run the end-to-end demo
+
+```bash
+python examples/test_flow.py
+```
+
+This script:
+- creates a small demo tool set,
+- ingests it into `ToolMemory`,
+- runs retrieval with `select_tools_for_query`,
+- and runs the example agent loop with dynamic tool expansion.
 
 
-## Integrate in Your Agent
+## Use it in your agent
 
-1. **Define tool metadata:** Capabilities, inputs/outputs, and safety notes.
-2. **Call ToolSEE before execution:** Request a ranked list for the current task.
-3. **Execute with confidence:** Use the top-ranked tool, with provenance and example calls.
+At minimum, you need two steps: ingest tools, then retrieve on each user query.
 
-## Roadmap
+```python
+from tool_see import ToolMemory, select_tools_for_query
 
-- Deeper safety signals (risk heuristics, sandboxing hooks).
-- Feedback-driven re-ranking based on agent outcomes.
-- Pluggable backends for tool registries and tracing.
+tool_memory = ToolMemory()
 
-If you’re wrestling with tool overload and unreliable selection, ToolSEE is the fastest path to calmer, more capable agents. Try the scripts above and plug it into your loop.
+tools = [
+	(
+		"file_search",
+		{
+			"name": "file_search",
+			"description": "Search project files by pattern.",
+			"function": lambda query: f"Searching for {query}",
+		},
+	),
+	(
+		"test_runner",
+		{
+			"name": "test_runner",
+			"description": "Run unit tests.",
+			"function": lambda: "Tests run successfully.",
+		},
+	),
+]
+
+tool_memory.add_tools(tools)
+
+query = "run tests and report failures"
+selected = select_tools_for_query(query=query, top_k=5, tool_memory=tool_memory)
+
+for t in selected:
+	print(t["_tool_id"], t["_score"], t.get("description", ""))
+```
+
+If you want the agent to fetch *additional* tools at runtime, see the dynamic tool expansion pattern in `tool_see/auto_tool_agent.py` (`search_tools` + middleware).
+
+
+## Evaluation
+
+This repo includes scripts to reproduce selection accuracy, latency, and token savings using the MetaTool toolset/datasets.
+
+Run:
+
+```bash
+pip install -e .[eval]
+python -m benchmark_toolsee.benchmark
+```
+
+TTFT (requires `OPENAI_API_KEY` + `OPENAI_MODEL`):
+
+```bash
+python -m benchmark_toolsee.ttft_comparison
+```
+
+### Reported results
+
+- Tool Selection Accuracy:
+	- Multi-tool:
+		- Tool Correctness score: 88.33%
+		- Median Latency (ms): 8.82 ms
+		- Median Token savings: 95%
+		- Total queries: 497
+	- Single-tool: 
+		- Tool Correctness score: 81.0%
+		- Median Latency (ms): 9.97 ms
+		- Median Token savings: 96%
+		- Total queries: 500 (random sample from 20,614 rows)
+	- Total tokens for all tools: 9804
+
+- TTFT evaluation:
+	- Median TTFT with all tools: 6196.5 ms
+	- Median TTFT with 5 tools: 436.0 ms
+	- Difference in TTFT: 5760.5 ms
+	<!-- 
+	- Percentage reduction in TTFT: 92.96%
+	- Total tokens for all tools: 4709
+	- Total tokens for selected tools: 128
+	- Token difference: 4581 tokens
+	- Token savings: 97.28%
+	- GPT input price is $1.25/1M tokens.
+	- Input cost for all tools for 1000 calls: 4709 tokens * 1000 * $1.25 / 1,000,000
+										4709 * 1000 * 1.25 / 1,000,000 = $5.88625
+	- Input cost for selected tools for 1000 calls: 128 tokens * 1000 * $1.25 / 1,000,000
+										128 * 1000 * 1.25 / 1,000,000 = $0.16 -->
+

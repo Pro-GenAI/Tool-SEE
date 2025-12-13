@@ -1,6 +1,6 @@
 [project]
-name = "toolsee"
-version = "0.1.0"
+name = "tool_see"
+version = "0.1.1"
 description = "ToolSEE helper package for storing tool embeddings and auto-attaching tools to agents"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -9,9 +9,19 @@ dependencies = [
   "langchain",
   "langchain-community",
   "langchain-openai",
+  "langgraph",
   "python-dotenv",
+  "typing-extensions",
+]
+
+[project.optional-dependencies]
+eval = [
+  "deepeval",
+  # "openai",  # Included when installing 'langchain-openai'
+  "requests",
+  "tiktoken",
 ]
 
 [tool.poetry]
-name = "toolsee"
-version = "0.1.0"
+name = "tool_see"
+version = "0.1.1"
