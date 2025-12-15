@@ -8,6 +8,9 @@
 
 <h4 align="center"><em>ToolSEE helps multi-tool agents stay fast, cheap, and accurate by selecting only the tools they need.</em></h4>
 
+> [!TIP]
+> Please star ⭐ the repository if you find ToolSEE useful!
+
 ## Why this exists
 Agents often get overloaded with large collections of tools and struggle to choose the right one. As tool catalogs grow (hundreds → thousands), agents get hit by a scalability bottleneck due to:
 - **Higher latency & cost:** Larger context take longer and cost more. Organizations that use multi-tool agents don’t just pay for tool execution — they pay for including tools in the context.
@@ -154,5 +157,5 @@ python -m benchmark_toolsee.ttft_comparison
 
 Future versions of the project might score better.
 
-> Note: Exact token→latency and token→cost depends on your provider/model and pricing.
-> The benchmarks below show the *measured* selection latency and the *measured* token savings in this repo.
+> [!NOTE] 
+> The benchmarks below show the *measured* selection latency and the *measured* token savings in the benchmark.
