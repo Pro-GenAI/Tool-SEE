@@ -1,53 +1,41 @@
 <!-- # ToolSEE: Tool Retrieval for Scalable Agents -->
 <p align="center">
 <img src="./assets/Workflow.gif" alt="Workflow" height="600"/>
+</p>
+
+**Comparison of agent workflows with and without ToolSEE:**
 <img src="./assets/Comparison.gif" alt="Workflow" height="253"/>
 
 <h4 align="center"><em>ToolSEE helps multi-tool agents stay fast, cheap, and accurate by selecting only the tools they need.</em></h4>
-</p>
 
 ## Why this exists
-
-Multi-tool agents don’t just pay for tool execution — they pay for *tool descriptions*. As tool catalogs grow (hundreds → thousands), agents get hit by a scalability bottleneck:
-
-- **Context overload:** you stuff huge tool schemas/descriptions into the prompt.
-- **Higher latency & cost:** bigger prompts take longer and cost more.
-- **Lower reliability:** noisy tool lists increase wrong-tool calls and hallucinations.
-
-ToolSEE is a lightweight tool retrieval layer that keeps the agent’s context small while still letting it use large tool catalogs.
+Agents often get overloaded with large collections of tools and struggle to choose the right one. As tool catalogs grow (hundreds → thousands), agents get hit by a scalability bottleneck due to:
+- **Higher latency & cost:** Larger context take longer and cost more. Organizations that use multi-tool agents don’t just pay for tool execution — they pay for including tools in the context.
+- **Lower reliability:** Noisy tool-set increase wrong tool-calls and hallucinations which make model take more steps before final response.
 
 ## What ToolSEE does
-
+ToolSEE is a lightweight tool retrieval layer that keeps the agent’s context small while still letting it use large tool catalogs.
 ToolSEE stands for Tool Search Engine for Efficient Agents. ToolSEE indexes your tools (name/description + metadata), then retrieves and ranks the most relevant tools for the current user request.
 
-**Outcome:** the model sees a small, high-signal tool set instead of a giant, noisy catalog.
+**Outcome:** the model sees a small, high-signal tool-set instead of a giant, noisy catalog.
 
-__Key points__:
+__Key features__:
 - Real-time search and ranking of tools relevant to the current task.
-- Filters candidate tools by relevance (and supports score thresholds).
-- Can dynamically expand tools mid-run via a `search_tools` tool.
-- Designed to be a drop-in module in an existing agent loop.
-
-Agents often get overloaded with large collections of tools and struggle to choose the right one. Multiple tools — especially junk, redundant, or harmful tools — can confuse agents and increase hallucinations, reducing their effectiveness and reliability. This problem is often compounded by insufficient context engineering — not just prompt engineering — because without well-curated context (concise tool descriptions, provenance, and example usages), agents receive noisy or incomplete signals about tool capabilities, which further degrades tool selection and increases errors. Excess tokens in the context leads to increasing cost and time taken to process the input.
-
-## How it works (high level)
-
-- **Ingest tools** into `ToolMemory` (in-memory store of embeddings + metadata).
-- **Retrieve** top-$k$ tools by cosine similarity for the current query.
-- **Attach only the selected tools** to the agent (or let the agent call `search_tools` to expand during execution).
-
-This keeps prompt/tool context usage effectively constant with respect to the total number of tools (the model only receives the few selected tools).
+- Filters tools by relevance (and supports score thresholds).
+- Allows the agent to **search** for more tools mid-run via a `search_tools` tool.
 
 ## Why it matters
+Selecting the right tool at the right moment is the difference between a reliable agent and a hallucination-prone one. ToolSEE keeps context usage effectively constant (`O(1)`) irrespective of the number of available tools, as the model only receives a list of the few selected tools.
 
-Selecting the right tool at the right moment is the difference between a reliable agent and a hallucination-prone one. ToolSEE makes large tool catalogs usable in production:
+ToolSEE makes large tool catalogs usable in production:
+- **Less noise → fewer wrong tools:** Retrieval narrows the action space.
+- **Less context → lower latency & cost:** Fewer tokens sent per call.
+- **Better scalability:** Add tools without “prompt bloat”.
 
-- **Less noise → fewer wrong tools:** retrieval narrows the action space.
-- **Less context → lower latency & cost:** fewer tokens sent per call.
-- **Better scalability:** add tools without “prompt bloat”.
-
-> Note: Exact token→latency and token→cost depends on your provider/model and pricing.
-> The benchmarks below show the *measured* selection latency and the *measured* token savings in this repo.
+## How it works
+- Ingests tools into `ToolMemory` (in-memory store of embeddings + metadata).
+- Retrieves top "k" tools by cosine similarity for the current query.
+- Attaches only the selected tools to the agent and let the agent call `search_tools` tool using its own query to fetch more tools.
 
 ## Quick Start
 
@@ -55,12 +43,6 @@ Selecting the right tool at the right moment is the difference between a reliabl
 
 ```bash
 pip install -e .
-```
-
-For evaluation/benchmark dependencies:
-
-```bash
-pip install -e .[eval]
 ```
 
 ### 2) Configure environment variables
@@ -110,7 +92,7 @@ tools = [
 	),
 ]
 
-tool_memory.add_tools(tools)
+tool_memory.add_tools(tools)  # Ingests new tools into the vector memory
 
 query = "run tests and report failures"
 selected = select_tools_for_query(query=query, top_k=5, tool_memory=tool_memory)
@@ -139,7 +121,7 @@ TTFT (requires `OPENAI_API_KEY` + `OPENAI_MODEL`):
 python -m benchmark_toolsee.ttft_comparison
 ```
 
-### Reported results
+### Benchmark results
 
 - Tool Selection Accuracy:
 	- Multi-tool:
@@ -170,3 +152,7 @@ python -m benchmark_toolsee.ttft_comparison
 	- Input cost for selected tools for 1000 calls: 128 tokens * 1000 * $1.25 / 1,000,000
 										128 * 1000 * 1.25 / 1,000,000 = $0.16 -->
 
+Future versions of the project might score better.
+
+> Note: Exact token→latency and token→cost depends on your provider/model and pricing.
+> The benchmarks below show the *measured* selection latency and the *measured* token savings in this repo.
