@@ -2,9 +2,9 @@
 name = "tool_see"
 version = "0.1.1"
 description = "ToolSEE helper package for storing tool embeddings and auto-attaching tools to agents"
+authors = [ { name = "Praneeth Vadlapati", email = "praneeth.vad@gmail.com" } ]
 readme = "README.md"
 requires-python = ">=3.8"
-
 dependencies = [
   "langchain",
   "langchain-community",
@@ -24,7 +24,3 @@ eval = [
 
 [tool.setuptools.packages.find]
 include = ["tool_see*", "benchmark_toolsee*"]
-
-[tool.poetry]
-name = "tool_see"
-version = "0.1.1"

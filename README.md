@@ -8,6 +8,16 @@
 
 <h4 align="center"><em>ToolSEE helps multi-tool agents stay fast, cheap, and accurate by selecting only the tools they need.</em></h4>
 
+[![Blog](https://img.shields.io/badge/Blog-FFF7CC?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/blog/prane-eth/tool-retrieval-for-scalable-agents)
+[![Medium](https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@praneeth.v/toolsee-tool-retrieval-for-scalable-agents-2ad44f81dc48)
+[![Preprint](https://img.shields.io/badge/Paper-FFFFFF?style=for-the-badge&logo=files)](https://www.researchgate.net/publication/398436916_ToolSEE_Agent_Tool_Search_Engine_for_Reliable_Tool_Selection)
+<!-- [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)]() -->
+
+[![AI](https://img.shields.io/badge/AI-C21B00?style=for-the-badge&logo=openaigym&logoColor=white)]()
+[![LLMs](https://img.shields.io/badge/LLMs-1A535C?style=for-the-badge&logo=openai&logoColor=white)]()
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=ffdd54)]()
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-darkgreen.svg?style=for-the-badge&logo=github&logoColor=white)](./LICENSE.md)
+
 > [!TIP]
 > Please star ⭐ the repository if you find ToolSEE useful!
 
