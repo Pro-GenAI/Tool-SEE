@@ -12,6 +12,7 @@ unused/
 eval_datasets/
 .deepeval/
 posts.*
+paper.*
 
 
 # Research paper files

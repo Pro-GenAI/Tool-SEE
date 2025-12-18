@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="bBJ8YV_kd4tqafeJHX1g">
-    <mxGraphModel dx="500" dy="275" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1261" dy="825" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -123,9 +123,6 @@
             <mxPoint x="241" y="584" as="sourcePoint" />
             <mxPoint x="291" y="534" as="targetPoint" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="uhWXA4CTJNEj9Tumuazx-10" value="&lt;font&gt;&lt;span&gt;&lt;u&gt;Eval Result&lt;/u&gt;:&lt;br&gt;ToolSEE saved&amp;nbsp;&lt;b&gt;9300 t&lt;/b&gt;&lt;/span&gt;&lt;span&gt;okens per call by selecting only relevant tools,&amp;nbsp;&lt;/span&gt;&lt;br&gt;&lt;span&gt;eliminates wait time of&amp;nbsp;&lt;b&gt;11625&lt;/b&gt;&lt;/span&gt;&lt;b&gt;&amp;nbsp;ms&lt;/b&gt;&lt;span&gt;&amp;nbsp;per agent&#39;s step (1.25 ms/token)&lt;/span&gt;&lt;br&gt;&lt;/font&gt;&lt;span&gt;and &lt;/span&gt;&lt;b&gt;$11,625&lt;/b&gt;&lt;span&gt;&amp;nbsp;saved in&amp;nbsp;&lt;/span&gt;&lt;span&gt;cost&lt;/span&gt;&lt;span&gt;&amp;nbsp;for 1M calls&lt;/span&gt;" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;rounded=0;labelBackgroundColor=none;fontFamily=Open Sans;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DOpen%2BSans;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="99.38" y="875" width="245.31" height="89" as="geometry" />
         </mxCell>
         <mxCell id="UbmDwhmBbVXr9Y826-Lx-1" value="AI Agent" style="text;whiteSpace=wrap;align=center;labelBackgroundColor=none;fontColor=#143642;fontSize=8;" parent="1" vertex="1">
           <mxGeometry x="240" y="553.6999999999999" width="46" height="20.37" as="geometry" />

@@ -165,7 +165,4 @@ python -m benchmark_toolsee.ttft_comparison
 	- Input cost for selected tools for 1000 calls: 128 tokens * 1000 * $1.25 / 1,000,000
 										128 * 1000 * 1.25 / 1,000,000 = $0.16 -->
 
-Future versions of the project might score better.
-
-> [!NOTE] 
-> The benchmarks below show the *measured* selection latency and the *measured* token savings in the benchmark.
+Future versions of the project might score better. Please star ⭐ the repository to encourage further development!
